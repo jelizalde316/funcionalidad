@@ -22,6 +22,7 @@ class ProductoController extends Controller
 
     public function store(Request $request)
     {
+        Producto::create($data);
         $request->validate([
             'nombre' => 'required|string|max:255',
             'precio' => 'required|integer|min:0',
@@ -36,6 +37,12 @@ class ProductoController extends Controller
 
         return redirect()->route('productos.index')
                          ->with('success', 'Producto creado correctamente');
+        
+        $data = $request->all();
+        if ($request->hasFile('imagen')) {
+            $data['imagen'] = $request->file('imagen')->store('productos', 'public');
+        }
+
     }
 
     public function show(Producto $producto)

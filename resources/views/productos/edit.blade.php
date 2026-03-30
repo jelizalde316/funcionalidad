@@ -77,6 +77,9 @@
             <div class="mb-3">
                 <label class="form-label">Imagen</label>
                 <input type="file" name="imagen" class="form-control">
+                @if($producto->imagen)
+                    <img src="{{ asset('storage/' . $producto->imagen) }}" width="100">
+                @endif
             </div>
 
             <div class="mb-3">
