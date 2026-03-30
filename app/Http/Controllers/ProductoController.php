@@ -42,7 +42,7 @@ class ProductoController extends Controller
         if ($request->hasFile('imagen')) {
             $data['imagen'] = $request->file('imagen')->store('productos', 'public');
         }
-
+    Producto::create($data);
     }
 
     public function show(Producto $producto)
