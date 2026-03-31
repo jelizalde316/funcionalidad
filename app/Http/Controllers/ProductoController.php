@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductoController extends Controller
 {
@@ -22,7 +23,8 @@ class ProductoController extends Controller
 
     public function store(Request $request)
     {
-        Producto::create($data);
+       // Producto::create($data);
+        //dd($request->all());
         $request->validate([
             'nombre' => 'required|string|max:255',
             'precio' => 'required|integer|min:0',
@@ -42,7 +44,7 @@ class ProductoController extends Controller
         if ($request->hasFile('imagen')) {
             $data['imagen'] = $request->file('imagen')->store('productos', 'public');
         }
-    Producto::create($data);
+
     }
 
     public function show(Producto $producto)
@@ -66,9 +68,30 @@ class ProductoController extends Controller
             'sku' => 'required|string|unique:productos,sku,' . $producto->id,
             'estado' => 'required|boolean',
             'categoria_id' => 'required|exists:categorias,id',
+            'imagen' => 'nullable|image|mimes:jpg,jpeg,png|max:50048',
         ]);
 
         $producto->update($request->all());
+
+// ✅ Si sube nueva imagen
+    if ($request->hasFile('imagen')) {
+
+        // 🔥 Eliminar imagen anterior (PRO)
+        if ($producto->imagen && Storage::disk('public')->exists($producto->imagen)) {
+            Storage::disk('public')->delete($producto->imagen);
+        }
+
+        // 💾 Guardar nueva imagen
+        $data['imagen'] = $request->file('imagen')->store('productos', 'public');
+    } else {
+        // 🚫 No tocar imagen si no se sube nueva
+        $data = $request->all();
+        unset($data['imagen']);
+    }
+
+    // ✅ Actualizar producto
+    $producto->update($data);
+
 
         return redirect()->route('productos.index')
                          ->with('success', 'Producto actualizado');

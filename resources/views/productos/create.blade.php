@@ -21,7 +21,7 @@
             </div>
         @endif
 
-        <form action="{{ route('productos.store') }}" method="POST">
+        <form action="{{ route('productos.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="mb-3">
