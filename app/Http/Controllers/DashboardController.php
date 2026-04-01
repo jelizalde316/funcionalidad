@@ -22,5 +22,10 @@ class DashboardController extends Controller
             'totalProductos',
             'ultimosProductos'
         ));
+        $productos = Producto::where('estado', 1)
+        ->whereNotNull('imagen')
+        ->get();
+
+    return view('dashboard', compact('productos'));
     }
 }
